@@ -1,0 +1,212 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.header { padding: 1.5rem 0 1rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid var(--border); margin-bottom: 1.5rem; }
+.header-left { display: flex; align-items: center; gap: 10px; }
+.tiktok-icon { width: 28px; height: 28px; border-radius: 6px; background: #000; display: flex; align-items: center; justify-content: center; }
+.title { font-size: 18px; font-weight: 500; color: var(--text-primary); }
+.subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+.badge { display: inline-flex; align-items: center; gap: 4px; border-radius: var(--radius); font-size: 11px; padding: 3px 8px; font-weight: 500; background: var(--bg-success); color: var(--text-success); border: 0.5px solid var(--border-success); }
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+.kpi-card { background: var(--surface-1); border-radius: var(--radius); padding: 12px 14px; }
+.kpi-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+.kpi-value { font-size: 22px; font-weight: 500; color: var(--text-primary); }
+.charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.5rem; }
+.chart-card { background: var(--surface-1); border: 0.5px solid var(--border); border-radius: 12px; padding: 1rem; }
+.chart-title { font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 12px; }
+.chart-wrap { position: relative; height: 180px; }
+.table-wrap { background: var(--surface-1); border: 0.5px solid var(--border); border-radius: 12px; overflow: hidden; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+th { font-size: 11px; font-weight: 500; color: var(--text-secondary); padding: 10px 12px; text-align: left; border-bottom: 0.5px solid var(--border); background: var(--surface-1); }
+td { padding: 10px 12px; color: var(--text-primary); border-bottom: 0.5px solid var(--border); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--surface-0); }
+.eng-bar-wrap { background: var(--surface-0); border-radius: 4px; height: 6px; width: 70px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 6px; }
+.eng-bar { height: 100%; background: #2a78d6; border-radius: 4px; }
+.post-thumb { width: 28px; height: 28px; border-radius: 4px; background: linear-gradient(135deg, #ff0050, #00f2ea); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; color: white; margin-right: 6px; vertical-align: middle; font-weight: 500; }
+.filter-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.filter-row select { font-size: 12px; padding: 5px 8px; border: 0.5px solid var(--border-strong); border-radius: var(--radius); background: var(--surface-2); color: var(--text-primary); }
+.info-bar { background: var(--bg-accent); border: 0.5px solid var(--border-accent); color: var(--text-accent); border-radius: var(--radius); padding: 8px 12px; font-size: 12px; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 6px; }
+</style>
+
+<h2 class="sr-only">TikTok Organic Performance Tracker — @abcmouse live data</h2>
+
+<div class="header">
+  <div class="header-left">
+    <div class="tiktok-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.53V6.79a4.85 4.85 0 01-1.02-.1z"/></svg>
+    </div>
+    <div>
+      <div style="display:flex; align-items:center; gap:8px">
+        <div class="title">TikTok tracker</div>
+        <span class="badge"><i class="ti ti-circle-check" aria-hidden="true" style="font-size:11px"></i> Live</span>
+      </div>
+      <div class="subtitle">@abcmouse · 20 posts · last fetched just now</div>
+    </div>
+  </div>
+</div>
+
+<div class="info-bar">
+  <i class="ti ti-info-circle" aria-hidden="true" style="font-size:14px"></i>
+  Saves aren't available via the sandbox API. Views, likes, comments, and shares are live. To refresh, ask Claude to re-fetch and rebuild the dashboard.
+</div>
+
+<div id="kpi-grid" class="kpi-grid"></div>
+
+<div class="charts-row">
+  <div class="chart-card">
+    <div class="chart-title">Views per post</div>
+    <div class="chart-wrap"><canvas id="views-chart" role="img" aria-label="Views per post for recent @abcmouse videos">No data</canvas></div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-title">Engagement breakdown</div>
+    <div class="chart-wrap"><canvas id="eng-chart" role="img" aria-label="Likes, comments, and shares breakdown">No data</canvas></div>
+  </div>
+</div>
+
+<div class="filter-row">
+  <div style="font-size:13px;font-weight:500;color:var(--text-primary);display:flex;align-items:center;gap:6px">
+    <i class="ti ti-table" aria-hidden="true" style="font-size:15px;vertical-align:-2px"></i> Posts
+  </div>
+  <select id="sort-select" onchange="renderTable()">
+    <option value="views">Sort by views</option>
+    <option value="likes">Sort by likes</option>
+    <option value="comments">Sort by comments</option>
+    <option value="shares">Sort by shares</option>
+    <option value="eng_rate">Sort by engagement rate</option>
+  </select>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width:36%">Post</th>
+        <th style="width:13%">Views</th>
+        <th style="width:11%">Likes</th>
+        <th style="width:11%">Comments</th>
+        <th style="width:11%">Shares</th>
+        <th style="width:18%">Eng. rate</th>
+      </tr>
+    </thead>
+    <tbody id="posts-body"></tbody>
+  </table>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const RAW = [{"like_count":66,"share_count":1,"title":"Pinky up 💅@KATSEYE #katseye (dc: @Randall)","view_count":789,"comment_count":16,"create_time":1785359970,"id":"7668062602211183903","share_url":"https://www.tiktok.com/@abcmouse/video/7668062602211183903"},{"share_count":43,"title":"I still got it 💅  #dougie @definitelynotjo #oliviarodrigo","view_count":7233,"comment_count":15,"create_time":1785283371,"id":"7667733620152405279","like_count":766},{"title":"Did you find them all? 🤭 #mecchachameleon #fypシ","view_count":2068,"comment_count":7,"create_time":1785191822,"id":"7667340407474261278","like_count":44,"share_count":0},{"title":"Can someone also do this to the inside of my brain?","view_count":3112,"comment_count":8,"create_time":1784830803,"id":"7665789848355163422","like_count":57,"share_count":1},{"like_count":12524,"share_count":2195,"title":"Kids bop versions from now on #iconicbymistake #katseye","view_count":182555,"comment_count":357,"create_time":1784746245,"id":"7665426666658811167"},{"share_count":2,"title":"You're either an iPad baby or a dinosaur, I don't make the rules 🤷","view_count":4284,"comment_count":7,"create_time":1784663526,"id":"7665071374288833822","like_count":137},{"share_count":0,"title":"Shoutout to the mouse that can pull me out of any slump #fyp","view_count":3911,"comment_count":13,"create_time":1784587694,"id":"7664745691742276894","like_count":137},{"like_count":82,"share_count":5,"title":"He got some height though @San Francisco Giants","view_count":4971,"comment_count":9,"create_time":1784327311,"id":"7663627351296642334"},{"title":"Where is ABC today?! #oraclepark #sfgiants","view_count":8893,"comment_count":13,"create_time":1784241967,"id":"7663260854086864158","like_count":607,"share_count":136},{"like_count":373,"share_count":46,"title":"Just cheesin #arianator","view_count":4900,"comment_count":16,"create_time":1784072799,"id":"7662534223391214879"},{"like_count":254,"share_count":9,"title":"Me vs the Jonas Brothers who did it best? #fyp #trend","view_count":8014,"comment_count":13,"create_time":1784063218,"id":"7662493074332994846"},{"title":"Proven to double early learning gains in reading and math.","view_count":776,"comment_count":0,"create_time":1784058096,"id":"7662471132884258061","like_count":3,"share_count":0},{"like_count":0,"share_count":0,"title":"Proven to double early learning gains in reading and math.","view_count":752,"comment_count":0,"create_time":1784058096,"id":"7662471119244430606"},{"like_count":0,"share_count":0,"title":"Proven to double early learning gains in reading and math.","view_count":942,"comment_count":0,"create_time":1784058096,"id":"7662471115939351822"},{"comment_count":0,"like_count":0,"share_count":0,"title":"Proven to double early learning gains in reading and math.","view_count":732,"create_time":1784058095,"id":"7662471105705282829"},{"comment_count":12,"like_count":226,"share_count":27,"title":"Are you this generation or the Macarena generation? @LE SSERAFIM #fearnot","view_count":3757,"create_time":1783981098,"id":"7662140366992182559"},{"like_count":36,"share_count":0,"title":"Lipgloss ✅Squishy ✅ Keys ✅ Fruit snacks ✅ #momtok #girlgrip","view_count":1856,"comment_count":4,"create_time":1783971110,"id":"7662097485166349599"},{"title":"Accidentally defined your childhood ✨","view_count":2790,"comment_count":12,"like_count":97,"share_count":5,"create_time":1783880334,"id":"7661707592221166878"},{"title":"I think you're all turning out pretty great 📱","view_count":2896,"comment_count":7,"like_count":116,"share_count":3,"create_time":1783799280,"id":"7661359488636587294"},{"comment_count":19,"like_count":269,"share_count":20,"title":"What the ABCmouse interns did this week 👩‍💻","view_count":47722,"create_time":1783720137,"id":"7661019575282109727"}];
+
+const postsData = RAW.map(v => ({
+  id: v.id,
+  title: v.title || 'Untitled',
+  views: v.view_count || 0,
+  likes: v.like_count || 0,
+  comments: v.comment_count || 0,
+  shares: v.share_count || 0,
+  date: new Date(v.create_time * 1000).toLocaleDateString('en-US', {month:'short', day:'numeric'}),
+  url: v.share_url || `https://www.tiktok.com/@abcmouse/video/${v.id}`
+}));
+
+function fmt(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+  return Number(n).toLocaleString();
+}
+
+function engRate(p) {
+  if (!p.views) return 0;
+  return (p.likes + p.comments + p.shares) / p.views * 100;
+}
+
+function renderKpis() {
+  const totViews = postsData.reduce((s,p) => s+p.views, 0);
+  const totLikes = postsData.reduce((s,p) => s+p.likes, 0);
+  const totComments = postsData.reduce((s,p) => s+p.comments, 0);
+  const totShares = postsData.reduce((s,p) => s+p.shares, 0);
+  const avgEng = postsData.reduce((s,p) => s+engRate(p), 0) / postsData.length;
+  const topPost = [...postsData].sort((a,b) => b.views-a.views)[0];
+  const kpis = [
+    {label:'Total views', value:fmt(totViews), icon:'ti-eye'},
+    {label:'Total likes', value:fmt(totLikes), icon:'ti-heart'},
+    {label:'Comments', value:fmt(totComments), icon:'ti-message'},
+    {label:'Shares', value:fmt(totShares), icon:'ti-share'},
+    {label:'Avg eng. rate', value:avgEng.toFixed(2)+'%', icon:'ti-chart-line'},
+    {label:'Top post views', value:fmt(topPost.views), icon:'ti-trophy'},
+  ];
+  document.getElementById('kpi-grid').innerHTML = kpis.map(k => `
+    <div class="kpi-card">
+      <div class="kpi-label"><i class="ti ${k.icon}" aria-hidden="true" style="font-size:13px"></i> ${k.label}</div>
+      <div class="kpi-value">${k.value}</div>
+    </div>`).join('');
+}
+
+function renderCharts() {
+  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+  const textColor = isDark ? '#c3c2b7' : '#898781';
+  const sorted = [...postsData].sort((a,b) => a.date > b.date ? 1 : -1);
+
+  new Chart(document.getElementById('views-chart'), {
+    type: 'bar',
+    data: {
+      labels: sorted.map(p => p.title.length > 14 ? p.title.slice(0,14)+'…' : p.title),
+      datasets: [{ label:'Views', data: sorted.map(p => p.views), backgroundColor:'#2a78d6', borderRadius:4, borderSkipped:false }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{
+        x:{ grid:{color:gridColor}, ticks:{color:textColor, font:{size:9}, maxRotation:45} },
+        y:{ grid:{color:gridColor}, ticks:{color:textColor, font:{size:11}, callback: v => fmt(v)} }
+      }
+    }
+  });
+
+  new Chart(document.getElementById('eng-chart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Likes','Comments','Shares'],
+      datasets: [{
+        data: [
+          postsData.reduce((s,p)=>s+p.likes,0),
+          postsData.reduce((s,p)=>s+p.comments,0),
+          postsData.reduce((s,p)=>s+p.shares,0),
+        ],
+        backgroundColor: ['#2a78d6','#eb6834','#1baf7a'],
+        borderWidth: 2,
+        borderColor: isDark ? '#1a1a19' : '#fcfcfb'
+      }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:true, position:'right', labels:{color:textColor, font:{size:11}, boxWidth:10, padding:12} } }
+    }
+  });
+}
+
+function renderTable() {
+  const sortBy = document.getElementById('sort-select').value;
+  const sorted = [...postsData].sort((a,b) => sortBy === 'eng_rate' ? engRate(b)-engRate(a) : b[sortBy]-a[sortBy]);
+  document.getElementById('posts-body').innerHTML = sorted.map(p => {
+    const er = engRate(p);
+    const initials = p.title.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+    return `<tr>
+      <td>
+        <span class="post-thumb">${initials}</span>
+        <a href="${p.url}" style="color:var(--text-primary);text-decoration:none;font-size:12px" title="${p.title}">${p.title.length>38?p.title.slice(0,38)+'…':p.title}</a>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;padding-left:34px">${p.date}</div>
+      </td>
+      <td style="font-weight:500">${fmt(p.views)}</td>
+      <td>${fmt(p.likes)}</td>
+      <td>${fmt(p.comments)}</td>
+      <td>${fmt(p.shares)}</td>
+      <td><span class="eng-bar-wrap"><span class="eng-bar" style="width:${Math.min(er*8,100)}%"></span></span>${er.toFixed(2)}%</td>
+    </tr>`;
+  }).join('');
+}
+
+renderKpis();
+renderCharts();
+renderTable();
+</script>
